@@ -1,18 +1,25 @@
-FROM node:18-alpine
+# Node.js 20を使用（EBADENGINE警告対策）
+FROM node:20-alpine
+
+# Prismaの動作に必要なライブラリをインストール
+RUN apk add --no-cache openssl libc6-compat
 
 WORKDIR /app
 
-# パッケージのインストール
+# パッケージ定義とPrismaスキーマを先にコピー（これが重要）
 COPY package*.json ./
+COPY prisma ./prisma/
+
+# 依存関係のインストール（ここで prisma generate も自動で走る）
 RUN npm install
 
-# ソースコードのコピー
+# 残りのソースコードをコピー
 COPY . .
 
 # Next.jsのビルド
 RUN npm run build
 
-# Hugging Face Spacesはデフォルトでポート7860を要求する
+# ポート設定
 EXPOSE 7860
 ENV PORT=7860
 ENV HOST=0.0.0.0
