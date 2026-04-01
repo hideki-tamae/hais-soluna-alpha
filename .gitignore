@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+build/
+.env*
+hais-brain/venv/
+venv/
+public/*.mp4
+public/*.mp3
+public/*.pdf
+public/*.png
+public/*.jpg
+public/images/
+public/docs/
+public/teasers/
+public/audit/

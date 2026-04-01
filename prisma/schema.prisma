@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED") // ★ Neon特有のマイグレーション用直接接続
+}
+
+// ==========================================
+// 既存システム（LPクレーム・管理ログ）
+// ==========================================
+model Claim {
+  id            String   @id @default(cuid())
+  walletAddress String   @unique
+  passphrase    String   
+  status        String   @default("approved")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model AdminLog {
+  id        String   @id @default(uuid())
+  action    String
+  targetId  String
+  createdAt DateTime @default(now())
+}
+
+// ==========================================
+// HAISシステム（命の家計簿・神経状態の履歴）
+// ==========================================
+model User {
+  id            String        @id @default(cuid())
+  walletAddress String        @unique
+  baseAcesScore Float?        // 基準となるACEsスコア（痛みの初期値）
+  createdAt     DateTime      @default(now())
+  scans         ScanHistory[] // 過去のスキャン履歴とのリレーション
+}
+
+model ScanHistory {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  
+  omegaScore    Float    // 抽出された神経状態スコア
+  neuralState   String   // ventral, sympathetic, dorsal, mixed
+  
+  // バイオマーカー生データ（CrewAI/DeepMind推論用）
+  f0Hz          Float?
+  jitterPct     Float?
+  shimmerPct    Float?
+  hnrDb         Float?
+  
+  solunaMinted  Float?   // 発行されたトークン量（価値化の証明）
+  createdAt     DateTime @default(now())
+}

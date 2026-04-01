@@ -1,0 +1,4 @@
+Claim_ID,Wallet_Address_Hashed,Tx_Hash_Link,SOLUNA_Claimed,Claim_Time_UTC,Status
+CL100001,0xab23...7c89,https://www.google.com/search?q=https://sepolia.etherscan.io/tx/0x0d1f...,100.0,2025-12-01T06:00:00Z,COMPLETED
+CL100002,0xcd45...1e2f,https://www.google.com/search?q=https://sepolia.etherscan.io/tx/0x1e2f...,150.0,2025-12-01T07:15:00Z,COMPLETED
+CL100003,0xef67...3g4h,https://www.google.com/search?q=https://sepolia.etherscan.io/tx/0x3g4h...,50.0,2025-12-01T08:30:00Z,COMPLETED

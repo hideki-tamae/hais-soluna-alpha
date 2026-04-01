@@ -1,0 +1,9 @@
+# Query: Human Asset Integrity System (HAIS) Demo Context
+# ContextLines: 1
+
+1 result - 1 file
+
+components/HaisFooter.tsx:
+  13                <p className="text-gray-400 text-sm font-medium">Re-Verse Civilization　優しさが制度になる文明へ</p>
+  14:               <p className="text-gray-500 text-xs">Human Asset Integrity System (HAIS) Demo Context</p>
+  15              </div>

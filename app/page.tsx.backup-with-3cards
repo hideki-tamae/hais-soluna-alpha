@@ -1,0 +1,193 @@
+'use client';
+
+import Link from 'next/link';
+import { Target, ArrowRight, Zap, Crown, BookOpen, Package } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
+
+import HeroSection from '../components/HeroSection';
+import SocialProof from '../components/SocialProof';
+import ProblemSolution from '../components/ProblemSolution';
+import FearSection from '../components/FearSection';
+import ProfileSummary from '../components/ProfileSummary';
+import BetaRecruitment from '../components/BetaRecruitment';
+import Benefits from '../components/Benefits';
+import FinalCTA from '../components/FinalCTA';
+import ProofOfCommitment from '../components/ProofOfCommitment';
+import { AuthGate } from '../components/AuthGate';
+
+export default function Home() {
+  // ✅ wagmi v2系でも安全なフィールドだけ使う
+  const { isConnected, isReconnecting } = useAccount();
+
+  const [isClientReady, setIsClientReady] = useState(false);
+
+  useEffect(() => {
+    setIsClientReady(true);
+  }, []);
+
+  // ★ UX改善: 接続済みなら、自動で誓いのセクションへスクロール
+  useEffect(() => {
+    if (!isClientReady) return;
+    if (!isConnected) return;
+    if (isReconnecting) return;
+
+    const target = document.getElementById('proof-section');
+    if (!target) return;
+
+    const t = window.setTimeout(() => {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 500);
+
+    return () => window.clearTimeout(t);
+  }, [isClientReady, isConnected, isReconnecting]);
+
+  return (
+    <main className="min-h-screen bg-[#050511] text-white selection:bg-purple-500 selection:text-white overflow-hidden">
+      <HeroSection />
+      <SocialProof />
+      <ProblemSolution />
+      <FearSection />
+      <ProfileSummary />
+      <BetaRecruitment />
+      <Benefits />
+
+      {/* ========================================
+          RE-VERSE GATE 誘導セクション（新規追加）
+          ======================================== */}
+      <section className="relative py-20 sm:py-24 md:py-32 overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-gray-900 to-black" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-emerald-500/5 via-cyan-500/5 to-blue-500/5 rounded-full blur-[100px]" />
+        
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Badge */}
+          <div className="flex justify-center mb-8 sm:mb-10">
+            <div className="inline-flex items-center gap-2 py-2 px-6 rounded-full bg-emerald-500/10 border border-emerald-500/30 backdrop-blur-sm">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_rgba(52,211,153,0.8)]" />
+              <span className="text-emerald-400 text-xs sm:text-sm font-mono tracking-[0.2em] uppercase">
+                Early Supporter Exclusive
+              </span>
+            </div>
+          </div>
+          
+          {/* Main Heading */}
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-center mb-6 sm:mb-8 tracking-tight">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-cyan-100 to-blue-200 drop-shadow-[0_0_30px_rgba(52,211,153,0.3)]">
+              SOLUNA トークンを受け取る
+            </span>
+          </h2>
+          
+          {/* Description */}
+          <p className="text-gray-400 text-base sm:text-lg md:text-xl text-center mb-10 sm:mb-12 max-w-3xl mx-auto leading-relaxed px-4">
+            Amazon または Kindle Unlimited のユーザーは、<br className="hidden sm:block" />
+            RE-VERSE GATE で<span className="text-emerald-400 font-semibold">特別なトークン</span>を受け取ることができます。
+          </p>
+          
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-10 sm:mb-14 max-w-4xl mx-auto">
+            
+            {/* Feature 1: Citizen */}
+            <div className="group relative bg-gradient-to-br from-emerald-900/20 to-teal-900/10 border border-emerald-500/20 rounded-xl p-5 sm:p-6 hover:border-emerald-500/40 transition-all hover:-translate-y-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
+              <div className="relative z-10">
+                <div className="w-12 h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Crown className="w-6 h-6 text-emerald-400" />
+                </div>
+                <h3 className="text-white font-bold text-lg mb-2">CITIZEN</h3>
+                <p className="text-gray-400 text-sm mb-3">Amazon購入者向け</p>
+                <ul className="space-y-2 text-xs text-emerald-300/80">
+                  <li className="flex items-center gap-2">
+                    <Zap className="w-3 h-3" /> 10x トークン報酬
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Crown className="w-3 h-3" /> 確定ギフト
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+            {/* Feature 2: Nomad */}
+            <div className="group relative bg-gradient-to-br from-cyan-900/20 to-blue-900/10 border border-cyan-500/20 rounded-xl p-5 sm:p-6 hover:border-cyan-500/40 transition-all hover:-translate-y-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
+              <div className="relative z-10">
+                <div className="w-12 h-12 bg-cyan-500/10 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <BookOpen className="w-6 h-6 text-cyan-400" />
+                </div>
+                <h3 className="text-white font-bold text-lg mb-2">NOMAD</h3>
+                <p className="text-gray-400 text-sm mb-3">Kindle会員向け</p>
+                <ul className="space-y-2 text-xs text-cyan-300/80">
+                  <li className="flex items-center gap-2">
+                    <Zap className="w-3 h-3" /> トライアルトークン
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Target className="w-3 h-3" /> 抽選ギフト
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+            {/* Feature 3: AI Oracle */}
+            <div className="group relative bg-gradient-to-br from-blue-900/20 to-indigo-900/10 border border-blue-500/20 rounded-xl p-5 sm:p-6 hover:border-blue-500/40 transition-all hover:-translate-y-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
+              <div className="relative z-10">
+                <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Target className="w-6 h-6 text-blue-400" />
+                </div>
+                <h3 className="text-white font-bold text-lg mb-2">AI認証</h3>
+                <p className="text-gray-400 text-sm mb-3">自動判定システム</p>
+                <ul className="space-y-2 text-xs text-blue-300/80">
+                  <li className="flex items-center gap-2">
+                    <Package className="w-3 h-3" /> スクショで認証
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Zap className="w-3 h-3" /> 即時発行
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+          </div>
+          
+          {/* CTA Button */}
+          <div className="flex flex-col items-center gap-6">
+            <Link 
+              href="/tester-claim"
+              className="group relative inline-flex items-center gap-3 px-8 sm:px-10 md:px-12 py-4 sm:py-5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 rounded-xl font-bold text-white text-base sm:text-lg md:text-xl transition-all shadow-[0_0_40px_rgba(16,185,129,0.4)] hover:shadow-[0_0_60px_rgba(16,185,129,0.6)] hover:-translate-y-1 active:translate-y-0"
+            >
+              <div className="absolute inset-0 bg-white/20 rounded-xl translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+              <Target className="w-5 h-5 sm:w-6 sm:h-6 relative z-10" />
+              <span className="relative z-10 tracking-wide">RE-VERSE GATE へ進む</span>
+              <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform relative z-10" />
+            </Link>
+            
+            {/* Sub Text */}
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500 font-mono">
+              <span className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                Amazon購入履歴
+              </span>
+              <span className="hidden sm:inline text-gray-700">または</span>
+              <span className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                Kindle Unlimited
+              </span>
+              <span className="text-gray-700">が必要です</span>
+            </div>
+          </div>
+          
+        </div>
+      </section>
+      {/* ======================================== */}
+
+      <div id="proof-section" className="py-10 relative z-20 flex flex-col items-center gap-12">
+        <AuthGate>
+          <ProofOfCommitment />
+        </AuthGate>
+      </div>
+
+      <FinalCTA />
+    </main>
+  );
+}

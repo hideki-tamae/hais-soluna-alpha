@@ -1,0 +1,9 @@
+# Query: logo.png
+# ContextLines: 1
+
+1 result - 1 file
+
+app/whitepaper/page.tsx:
+  35                <div className="absolute top-8 right-8 w-16 h-16 opacity-80">
+  36:                 <img src="/logo.png" alt="SOLUNA Logo" className="w-full h-auto grayscale" />
+  37                </div>
