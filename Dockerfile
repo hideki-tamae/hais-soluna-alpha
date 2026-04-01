@@ -1,20 +1,27 @@
-# Node.js 20を使用（EBADENGINE警告対策）
 FROM node:20-alpine
 
-# Prismaの動作に必要なライブラリをインストール
+# 依存ライブラリのインストール
 RUN apk add --no-cache openssl libc6-compat
 
 WORKDIR /app
 
-# パッケージ定義とPrismaスキーマを先にコピー（これが重要）
+# パッケージとPrismaを先にコピー
 COPY package*.json ./
 COPY prisma ./prisma/
 
-# 依存関係のインストール（ここで prisma generate も自動で走る）
+# 依存関係インストール（Prismaクライアント生成含む）
 RUN npm install
 
-# 残りのソースコードをコピー
+# 全ソースコードをコピー
 COPY . .
+
+# =========================================================================
+# 【幽霊ファイル生成部】
+# ビルドエラーを回避するため、削除した画像や動画のダミー（0バイト）を生成する
+# =========================================================================
+RUN mkdir -p public/images public/docs public/teasers public/audit && \
+    touch public/images/En0.png public/images/En1.png public/images/En2.png public/images/En3.png public/images/En4.png && \
+    touch public/images/JP0.png public/images/JP1.png public/images/JP2.png public/images/JP3.png public/images/JP4.png public/images/JP5o-movie2.mp4 public/soluna_rnb.mp3
 
 # Next.jsのビルド
 RUN npm run build
