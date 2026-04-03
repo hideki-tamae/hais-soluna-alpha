@@ -37,7 +37,7 @@ export default function HeaderWrapper() {
         >
           <div className="h-16 w-16 transition-transform group-hover:scale-105 rounded-full overflow-hidden">
             <img
-              src="/cyber-cross-logo.png"
+              src="https://huggingface.co/spaces/JonesHideki/hais-polyvagal/resolve/main/public/cyber-cross-logo.png"
               alt="Cyber Cross Logo"
               className="w-full h-full object-cover"
             />
