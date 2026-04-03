@@ -15,7 +15,8 @@ export default function HeaderWrapper() {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  // if (!mounted) return null;
+
 
   // 🚨 修正：現在のURLに /hais や /v3 が含まれているか「だけ」で判定
   // これにより、記憶（Storage）に頼らず、今のページに合わせた戻り先になります
