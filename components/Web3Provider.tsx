@@ -11,12 +11,10 @@ import {
 
 import { coinbaseWallet, metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
 import { WagmiProvider, createConfig, http } from 'wagmi';
-// ★ 使用するチェーンを統一（ここでは snippet に合わせ sepolia を含めています）
-import { mainnet, polygon, sepolia, baseSepolia } from 'wagmi/chains';
+// ★ sepolia を確実に追加
+import { mainnet, polygon, sepolia } from 'wagmi/chains';
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-
-// 👇 取得した ID を直接入力（環境変数がなくても動くようにします）
-const projectId = '08e0e7b17c58fae4b5a53c4ec8f0a7ca';
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '';
 
 const connectors = connectorsForWallets(
   [
@@ -25,17 +23,16 @@ const connectors = connectorsForWallets(
       wallets: [metaMaskWallet, coinbaseWallet],
     },
   ],
-  { appName: 'ACES CARE HUB JAPAN', projectId }
+  { appName: 'Re-Verse Civilization', projectId }
 );
 
-// ★ chains の先頭を baseSepolia に固定（SOLUNA のテスト用）
+// ★ chainsに sepolia を追加し、先頭に置く
 const config = createConfig({
-  chains: [baseSepolia, mainnet, polygon, sepolia],
+  chains: [sepolia, mainnet, polygon],
   transports: {
-    [baseSepolia.id]: http(),
+    [sepolia.id]: http(),
     [mainnet.id]: http(),
     [polygon.id]: http(),
-    [sepolia.id]: http(),
   },
   connectors,
   ssr: true,
@@ -47,9 +44,9 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        {/* ★ 初期接続チェーンを baseSepolia に固定 */}
+        {/* ★ initialChain を sepolia に固定 */}
         <RainbowKitProvider
-          initialChain={baseSepolia}
+          initialChain={sepolia}
           theme={darkTheme({
             accentColor: '#22d3ee',
             accentColorForeground: 'white',
