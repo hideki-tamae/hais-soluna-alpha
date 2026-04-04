@@ -5,11 +5,11 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DATABASE_URL_UNPOOLED") // ★ Neon特有のマイグレーション用直接接続
+  directUrl = env("DATABASE_URL_UNPOOLED") // Neon/Serverless用 直接接続
 }
 
 // ==========================================
-// 既存システム（LPクレーム・管理ログ）
+// 1. 既存・管理レイヤー
 // ==========================================
 model Claim {
   id            String   @id @default(cuid())
@@ -28,30 +28,68 @@ model AdminLog {
 }
 
 // ==========================================
-// HAISシステム（命の家計簿・神経状態の履歴）
+// 2. HAIS Core（命の家計簿：ユーザー基盤）
 // ==========================================
 model User {
   id            String        @id @default(cuid())
   walletAddress String        @unique
-  baseAcesScore Float?        // 基準となるACEsスコア（痛みの初期値）
+  baseAcesScore Float?        // 逆境体験の資産化係数
   createdAt     DateTime      @default(now())
-  scans         ScanHistory[] // 過去のスキャン履歴とのリレーション
+  scans         ScanHistory[] 
+  careActions   CareAction[]
+  peakCalib     PeakCalibration?
 }
 
+// ==========================================
+// 3. Scan & Evidence（神経状態と透明性の証跡）
+// ==========================================
 model ScanHistory {
   id            String   @id @default(cuid())
   userId        String
   user          User     @relation(fields: [userId], references: [id])
   
-  omegaScore    Float    // 抽出された神経状態スコア
+  omegaScore    Float    // R(ω): 神経状態統合スコア
   neuralState   String   // ventral, sympathetic, dorsal, mixed
   
-  // バイオマーカー生データ（CrewAI/DeepMind推論用）
+  // バイオマーカー生データ
   f0Hz          Float?
   jitterPct     Float?
   shimmerPct    Float?
   hnrDb         Float?
   
-  solunaMinted  Float?   // 発行されたトークン量（価値化の証明）
+  // ★ 証跡拡張：透明性の担保
+ logicVersion String @default("Satsuma-v1.0") // デフォルト値を設定
+  
+  solunaMinted  Float?   // 価値化されたトークン量
   createdAt     DateTime @default(now())
+}
+
+// ==========================================
+// 4. Peak & Calibration（茹でガエルの罠からの解放）
+// ==========================================
+model CareAction {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  actionType    String   // 'MINT_SOLUNA', 'PROVIDE_CARE' 等
+  impactScore   Float    // 行動によるレジリエンス加点
+  createdAt     DateTime @default(now())
+}
+
+model PeakCalibration {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+  
+  peakScore     Float    // 黄金基準（過去最高ポテンシャル）
+  isTrapped     Boolean  @default(false) // 茹でガエル検知
+  proposedSync  Boolean  @default(false) // 沈黙の提案フラグ
+  
+  // ★ 証跡拡張：理由の明示
+  syncReason    String?  // 技術的理由: "Current(45) < Peak(75) * 0.7"
+  syncReasonJa  String?  // ユーザー向け: "本来のあなたより30%低下しています"
+
+  syncedAt      DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

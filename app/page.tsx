@@ -18,17 +18,21 @@ import FinalCTA from '../components/FinalCTA';
 import ProofOfCommitment from '../components/ProofOfCommitment';
 import { AuthGate } from '../components/AuthGate';
 
-export default function Home() {
-  // ✅ wagmi v2系でも安全なフィールドだけ使う
-  const { isConnected, isReconnecting } = useAccount();
+// ★ Civilization OS Core: 神経系とUIのインポート
+import SyncProposal from '../components/SyncProposal';
+import { useSyncProposal } from '../hooks/useSyncProposal';
 
+export default function Home() {
+  const { isConnected, isReconnecting, address } = useAccount();
   const [isClientReady, setIsClientReady] = useState(false);
+
+  // ★ 薩摩アーキテクチャ: ユーザーのアドレスに基づき、Syncの提案を監視
+  const { proposal, handleSync } = useSyncProposal(address || "");
 
   useEffect(() => {
     setIsClientReady(true);
   }, []);
 
-  // ★ UX改善: 接続済みなら、自動で誓いのセクションへスクロール
   useEffect(() => {
     if (!isClientReady) return;
     if (!isConnected) return;
@@ -56,16 +60,12 @@ export default function Home() {
 
       {/* ========================================
           RE-VERSE GATE 誘導セクション
-          千利休的ミニマリズム + ゲーリー・ハルバート流0.5秒訴求
           ======================================== */}
       <section className="relative py-20 sm:py-28 overflow-hidden">
-        {/* 背景エフェクト（控えめ） */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#050511] via-gray-900/50 to-[#050511]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[120px]" />
 
         <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center">
-
-          {/* バッジ（極小） */}
           <div className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-sm mb-8">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-emerald-400/80 text-xs font-mono tracking-wider uppercase">
@@ -73,24 +73,19 @@ export default function Home() {
             </span>
           </div>
 
-          {/* メインメッセージ（ゲーリー・ハルバート流：0.5秒で理解） */}
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 leading-tight">
-            <span className="text-white">
-              読者なら、今すぐトークンを
-            </span>
+            <span className="text-white">読者なら、今すぐトークンを</span>
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-cyan-300">
               無料で受け取れます
             </span>
           </h2>
 
-          {/* サブコピー（簡潔） */}
           <p className="text-gray-400 text-base sm:text-lg mb-10 max-w-xl mx-auto leading-relaxed">
             Amazon購入履歴 または Kindle Unlimited を<br className="hidden sm:block" />
             アップロードするだけ。AI が自動判定します。
           </p>
 
-          {/* CTA（1つだけ・強力） */}
           <Link
             href="/tester-claim"
             className="group inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 rounded-full font-bold text-white text-lg transition-all duration-300 shadow-[0_0_40px_rgba(16,185,129,0.4)] hover:shadow-[0_0_60px_rgba(16,185,129,0.6)] hover:-translate-y-1 active:translate-y-0"
@@ -102,14 +97,11 @@ export default function Home() {
             <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
           </Link>
 
-          {/* 信頼性（小さく） */}
           <p className="mt-8 text-xs text-gray-500 font-mono">
             所要時間: 約30秒 / 完全無料 / AI自動認証
           </p>
-
         </div>
       </section>
-      {/* ======================================== */}
 
       <div id="proof-section" className="py-10 relative z-20 flex flex-col items-center gap-12">
         <AuthGate>
@@ -119,14 +111,26 @@ export default function Home() {
 
       <FinalCTA />
 
-      {/* PRO Navigation Link */}
+      {/* ========================================
+          UI Navigation / Quiet Intervention
+          ======================================== */}
       <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
+        {/* ★ 不言実行のインターフェース: 条件が揃った時だけ「波紋」が立ち上がる */}
+        {isClientReady && isConnected && (
+          <SyncProposal
+            proposed={proposal?.proposedSync || false}
+            reason={proposal?.syncReasonJa}
+            onSync={handleSync}
+          />
+        )}
 
         <Link
           href="/pro"
           className="flex items-center gap-2 px-4 py-3 md:px-5 md:py-3 bg-gradient-to-r from-slate-800 to-slate-950 text-slate-300 rounded-full shadow-2xl border border-slate-600/50 hover:border-slate-400/80 hover:scale-105 transition-all group w-fit"
         >
-          <svg className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+          <svg className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
           <span className="font-bold tracking-wider text-xs md:text-sm group-hover:text-white transition-colors">PRO (97+)</span>
         </Link>
       </div>
