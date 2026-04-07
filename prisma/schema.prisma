@@ -23,11 +23,11 @@ model User {
 
 model Claim {
   id            String   @id @default(cuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id])
+  userId        String?  // ✅ `?` を追加して任意に
+  user          User?    @relation(fields: [userId], references: [id]) // ✅ `?` を追加して任意に
   walletAddress String?
-  passphrase    String?  // ✅ これが最後のエラーを消す鍵です
-  amount        Float
+  passphrase    String?
+  amount        Float?   // ✅ `?` を追加して任意に
   status        String   @default("PENDING")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
