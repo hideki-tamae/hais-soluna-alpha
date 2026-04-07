@@ -1,4 +1,4 @@
-// app/api/claim/route.ts
+// src/app/api/claim/route.ts
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
@@ -37,11 +37,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // ▼▼▼ 修正ポイント：findUnique ではなく findFirst に変更しました ▼▼▼
+    // 既存の申請をチェック
     const existingClaim = await prisma.claim.findFirst({
       where: { walletAddress: walletAddress },
     });
-    // ▲▲▲▲▲▲
 
     if (existingClaim) {
       return NextResponse.json(
@@ -50,17 +49,30 @@ export async function POST(request: Request) {
       );
     }
 
+    // ▼▼▼ 修正ポイント：Userモデルとの紐付けと必須項目(amount)の追加 ▼▼▼
+    
+    // 1. Userが未登録なら作成、登録済みなら取得
+    const user = await prisma.user.upsert({
+      where: { walletAddress: walletAddress },
+      update: {},
+      create: { walletAddress: walletAddress, baseAcesScore: 4.0 },
+    });
+
     // ID生成
     const claimId = `claim_${Math.random().toString(36).substring(2, 10)}`;
     
+    // 2. 必須項目を満たしてClaimデータを生成
     const newClaim = await prisma.claim.create({
       data: {
         id: claimId,
+        userId: user.id,             // ✅ 追加: 誰の申請かをUserテーブルと紐付け
         walletAddress: walletAddress,
         passphrase: passphrase,
+        amount: 100,                 // ✅ 追加: 付与するトークン量（ここでは100に設定）
         status: 'approved',
       },
     });
+    // ▲▲▲▲▲▲
 
     return NextResponse.json({ 
       success: true, 

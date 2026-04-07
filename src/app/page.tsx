@@ -45,6 +45,8 @@ export default function Home() {
       target.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 500);
 
+    
+
     return () => window.clearTimeout(t);
   }, [isClientReady, isConnected, isReconnecting]);
 
@@ -117,12 +119,15 @@ export default function Home() {
       <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
         {/* ★ 不言実行のインターフェース: 条件が揃った時だけ「波紋」が立ち上がる */}
         {isClientReady && isConnected && (
+          
           <SyncProposal
-            proposed={proposal?.proposedSync || false}
-            reason={proposal?.syncReasonJa}
-            onSync={handleSync}
-          />
+          proposed={proposal?.proposed || false} // ✅ proposedSync を proposed に
+          reason={proposal?.reason}             // ✅ syncReasonJa を reason に
+          onSync={handleSync}
+        />
+          
         )}
+
 
         <Link
           href="/pro"

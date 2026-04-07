@@ -1,95 +1,81 @@
+// prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DATABASE_URL_UNPOOLED") // Neon/Serverless用 直接接続
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-// ==========================================
-// 1. 既存・管理レイヤー
-// ==========================================
+model User {
+  id              String           @id @default(cuid())
+  walletAddress   String           @unique
+  baseAcesScore   Float            @default(4.0)
+  scans           ScanHistory[]
+  peakCalib       PeakCalibration?
+  careActions     CareAction[]
+  claims          Claim[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
 model Claim {
   id            String   @id @default(cuid())
-  walletAddress String   @unique
-  passphrase    String   
-  status        String   @default("approved")
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  walletAddress String?
+  passphrase    String?  // ✅ これが最後のエラーを消す鍵です
+  amount        Float
+  status        String   @default("PENDING")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
 
 model AdminLog {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   action    String
-  targetId  String
+  targetId  String?
+  details   String?
   createdAt DateTime @default(now())
 }
 
-// ==========================================
-// 2. HAIS Core（命の家計簿：ユーザー基盤）
-// ==========================================
-model User {
-  id            String        @id @default(cuid())
-  walletAddress String        @unique
-  baseAcesScore Float?        // 逆境体験の資産化係数
-  createdAt     DateTime      @default(now())
-  scans         ScanHistory[] 
-  careActions   CareAction[]
-  peakCalib     PeakCalibration?
-}
-
-// ==========================================
-// 3. Scan & Evidence（神経状態と透明性の証跡）
-// ==========================================
 model ScanHistory {
-  id            String   @id @default(cuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id])
-  
-  omegaScore    Float    // R(ω): 神経状態統合スコア
-  neuralState   String   // ventral, sympathetic, dorsal, mixed
-  
-  // バイオマーカー生データ
-  f0Hz          Float?
-  jitterPct     Float?
-  shimmerPct    Float?
-  hnrDb         Float?
-  
-  // ★ 証跡拡張：透明性の担保
- logicVersion String @default("Satsuma-v1.0") // デフォルト値を設定
-  
-  solunaMinted  Float?   // 価値化されたトークン量
-  createdAt     DateTime @default(now())
-}
-
-// ==========================================
-// 4. Peak & Calibration（茹でガエルの罠からの解放）
-// ==========================================
-model CareAction {
-  id            String   @id @default(cuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id])
-  actionType    String   // 'MINT_SOLUNA', 'PROVIDE_CARE' 等
-  impactScore   Float    // 行動によるレジリエンス加点
-  createdAt     DateTime @default(now())
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  omegaScore   Float
+  neuralState  String
+  logicVersion String   @default("Satsuma-v1.1")
+  f0Hz         Float?
+  jitterPct    Float?
+  shimmerPct   Float?
+  hnrDb        Float?
+  createdAt    DateTime @default(now())
 }
 
 model PeakCalibration {
-  id            String   @id @default(cuid())
-  userId        String   @unique
-  user          User     @relation(fields: [userId], references: [id])
-  
-  peakScore     Float    // 黄金基準（過去最高ポテンシャル）
-  isTrapped     Boolean  @default(false) // 茹でガエル検知
-  proposedSync  Boolean  @default(false) // 沈黙の提案フラグ
-  
-  // ★ 証跡拡張：理由の明示
-  syncReason    String?  // 技術的理由: "Current(45) < Peak(75) * 0.7"
-  syncReasonJa  String?  // ユーザー向け: "本来のあなたより30%低下しています"
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id])
+  peakScore    Float
+  lastScore    Float    @default(0)
+  isTrapped    Boolean  @default(false)
+  proposedSync Boolean  @default(false)
+  syncReasonJa String?
+  syncedAt     DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
 
-  syncedAt      DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+model CareAction {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  action      String
+  actionType  String?
+  amount      Float
+  impactScore Float    @default(0)
+  createdAt   DateTime @default(now())
 }

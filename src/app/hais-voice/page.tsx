@@ -42,8 +42,9 @@ export default function HaisVoicePage() {
       */}
       {isConnected && (
         <SyncProposal
-          proposed={proposal?.proposedSync || false}
-          reason={proposal?.syncReasonJa}
+
+          proposed={proposal?.proposed || false}
+　　　　　　reason={proposal?.reason}
           onSync={handleSync}
         />
       )}
