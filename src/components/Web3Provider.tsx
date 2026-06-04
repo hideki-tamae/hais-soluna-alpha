@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import '@rainbow-me/rainbowkit/styles.css';
 
 import {
@@ -27,21 +27,21 @@ const connectors = connectorsForWallets(
   { appName: 'Re-Verse Civilization', projectId }
 );
 
-// ★ chainsに sepolia を追加し、先頭に置く
-const config = createConfig({
-  chains: [sepolia, mainnet, polygon],
-  transports: {
-    [sepolia.id]: http(),
-    [mainnet.id]: MAINNET_RPC_URL ? http(MAINNET_RPC_URL) : http(),
-    [polygon.id]: http(),
-  },
-  connectors,
-  ssr: true,
-});
-
-const queryClient = new QueryClient();
-
 export function Web3Provider({ children }: { children: React.ReactNode }) {
+  // ★ chainsに sepolia を追加し、先頭に置く
+  const config = useMemo(() => createConfig({
+    chains: [sepolia, mainnet, polygon],
+    transports: {
+      [sepolia.id]: http(),
+      [mainnet.id]: MAINNET_RPC_URL ? http(MAINNET_RPC_URL) : http(),
+      [polygon.id]: http(),
+    },
+    connectors,
+    ssr: true,
+  }), []);
+
+  const queryClient = useMemo(() => new QueryClient(), []);
+
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>

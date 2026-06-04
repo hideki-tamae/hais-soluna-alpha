@@ -155,19 +155,37 @@ async def get_voice_insight(req: VoiceInsightRequest):
     """文明OSの核：意味の再構築と報酬の永続化"""
     user_name = identify_user(req.user_id)
     
-    # 報酬計算ロジック（The Re-Verse Factor）
-    base_reward = (100.0 - req.polyvagal_score) * 0.5
-    multiplier = 1.5 if req.autonomic_state == "dorsal_vagal" else 1.2 if req.autonomic_state == "sympathetic" else 1.0
-    token_reward = round(base_reward * multiplier, 2)
+    voice_payload = {
+        "polyvagal_score": req.polyvagal_score,
+        "autonomic_state": req.autonomic_state,
+        "condition": req.condition,
+        "f0_hz": req.f0_hz,
+        "jitter_pct": req.jitter_pct,
+        "shimmer_pct": req.shimmer_pct
+    }
 
-    prompt = f"ユーザー: {user_name}, Score: {req.polyvagal_score}, State: {req.autonomic_state}, Condition: {req.condition}"
-    
-    if not llm_router:
-        raise HTTPException(status_code=500, detail="LLM Router not available")
-
-    result = llm_router.route(prompt)
-    if result["status"] != "success":
-        raise HTTPException(status_code=500, detail="LLM Router Error")
+    # ==========================================
+    # Antigravity Triad Integration (Master Directive)
+    # ==========================================
+    import asyncio
+    try:
+        from crew import AntigravityTriad
+        def execute_triad():
+            triad = AntigravityTriad(user_name=user_name, voice_data=voice_payload)
+            return triad.run()
+            
+        # 非同期スレッドでCrewAIを実行し、FastAPIメインループをブロックしない
+        logger.info(f"🚀 Triggering Antigravity Triad for {user_name}...")
+        crew_result = await asyncio.to_thread(execute_triad)
+        
+        insight_text = crew_result["insight"]
+        token_reward = crew_result["care_token_reward"]
+        logger.info(f"✨ Triad Execution Successful: +{token_reward} SLUNA")
+    except Exception as e:
+        logger.error(f"❌ Triad Pipeline Error: {e}")
+        # Fallback in case of module or generation error
+        insight_text = "System Notice: The strategy generation encountered interference. Autonomous correction pending."
+        token_reward = 5.0
 
     db = SessionLocal()
     try:
@@ -184,11 +202,12 @@ async def get_voice_insight(req: VoiceInsightRequest):
             user_id=user_record.id,
             care_score=req.polyvagal_score,
             soluna_allocated=token_reward,
-            insight_text=result["response"]
+            insight_text=insight_text
         )
         db.add(new_assessment)
         db.commit()
         logger.info(f"✅ DB Saved: {assessment_id} for {user_name}")
+
     except Exception as e:
         db.rollback()
         logger.error(f"❌ DB Save Error: {e}")
@@ -200,10 +219,13 @@ async def get_voice_insight(req: VoiceInsightRequest):
         "status": "success",
         "assessment_id": assessment_id,
         "user": user_name,
-        "insight": result["response"],
+        "insight": insight_text,
         "care_token_reward": token_reward,
         "timestamp": datetime.now().isoformat()
     }
+
+# The triad_dispatch endpoint is deprecated since the Triad is now
+# embedded directly into /api/hais/voice-insight asynchronously.
 
 if __name__ == "__main__":
     import uvicorn

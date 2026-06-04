@@ -1,0 +1,347 @@
+{
+  "name": "Paragraph Content Auto-Publisher (Test Environment)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "name": "Cron Daily 8AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [0, -100]
+    },
+    {
+      "parameters": {},
+      "name": "手動テスト実行",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 100]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://localhost:27123/graph",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{$env.OBSIDIAN_REST_API_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "method",
+              "value": "resources/read"
+            },
+            {
+              "name": "params",
+              "value": "{\"uri\": \"obsidian:///vault/Content/Paragraph/drafts\", \"filter\": {\"tags\": [\"paragraph-draft\"], \"modified_after\": \"{{$now.subtract(1, 'day')}}\"}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Step 1: Get Obsidian Drafts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.files && $json.files.length > 0}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Step 2: Check If Drafts Exist",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "claude-3-opus-20240229"
+            },
+            {
+              "name": "max_tokens",
+              "value": "2000"
+            },
+            {
+              "name": "system",
+              "value": "あなたは秀樹（田前秀樹）の「Care Capitalism フレームワーク」を理解し、Paragraph 用の高品質な記事を生成する AI です。出力はJSONフォーマットに限定すること。"
+            },
+            {
+              "name": "messages",
+              "value": "=[{\"role\": \"user\", \"content\": \"以下は秀樹の Paragraph 用下書きです。\\n【タイトル】\\n{{$json.files[0].frontmatter.title}}\\n【下書き内容】\\n{{$json.files[0].content}}\\n【SEO キーワード】\\n{{$json.files[0].frontmatter.seo_keywords.join(', ')}}\\n\\n【要件】\\n1. 日本語 + 英語混在（50:50 比率）\\n2. タイトル: 30字以内\\n3. 本文: 400-600字\\n4. トーン: 哲学的 × 実装的\\n5. 構成: 導入 → 問題提起 → 解決策 → CTA\\n\\n【出力形式】\\n{\\n  \\\"title_ja\\\": \\\"...\\\",\\n  \\\"title_en\\\": \\\"...\\\",\\n  \\\"body_mixed\\\": \\\"...\\\",\\n  \\\"seo_tags\\\": [\\\"tag1\\\"],\\n  \\\"cta\\\": \\\"...\\\",\\n  \\\"estimated_read_time_minutes\\\": 3\\n}\"}]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Step 3: Generate Claude Article",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [660, -100]
+    },
+    {
+      "parameters": {
+        "jsCode": "try {\n  const content = items[0].json.content[0].text;\n  let jsonStr = content;\n  if (content.includes('```json')) {\n    jsonStr = content.split('```json')[1].split('```')[0].trim();\n  }\n  const response = JSON.parse(jsonStr);\n  return [{\n    title: response.title_ja,\n    titleEn: response.title_en,\n    body: response.body_mixed,\n    seoTags: response.seo_tags,\n    cta: response.cta,\n    readTime: response.estimated_read_time_minutes,\n    originalFile: $('Step 1: Get Obsidian Drafts').item.json.files[0].path,\n    generatedAt: new Date().toISOString()\n  }];\n} catch (e) {\n  throw new Error('Claude出力のJSON解析に失敗しました: ' + e.message);\n}"
+      },
+      "name": "Step 4: Parse Claude JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, -100]
+    },
+    {
+      "parameters": {
+        "jsCode": "const post = items[0].json;\nconst wordCount = post.body.split(/\\s+/).length;\nconst hashtags = post.seoTags.map(tag => `#${tag}`).join(' ');\n\nreturn [{\n  metadata: {\n    title: post.title,\n    wordCount: wordCount,\n    readTime: post.readTime,\n    tags: post.seoTags,\n    hashtags: hashtags,\n    language: 'mixed_ja_en',\n    contentType: 'article',\n    authorId: 'hideki-tamae',\n    generatedAt: post.generatedAt\n  },\n  paragraphPayload: {\n    title: post.title,\n    body: `${post.body}\\n\\n---\\n**${post.cta}**`,\n    tags: post.seoTags\n  },\n  originalFile: post.originalFile\n}];"
+      },
+      "name": "Step 5: Extract Metadata",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, -100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.paragraph.com/v1/publications/{{$env.PARAGRAPH_PUBLICATION_ID}}/posts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.PARAGRAPH_API_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "={{$json.paragraphPayload.title}}"
+            },
+            {
+              "name": "body",
+              "value": "={{$json.paragraphPayload.body}}"
+            },
+            {
+              "name": "tags",
+              "value": "={{JSON.stringify($json.paragraphPayload.tags)}}"
+            },
+            {
+              "name": "isDraft",
+              "value": "false"
+            },
+            {
+              "name": "publishedAt",
+              "value": "={{$now.toISO8601()}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Step 6: Post to Paragraph API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1320, -100]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=INSERT INTO paragraph_posts (\n  post_id, title, slug, body, word_count, read_time_minutes, hashtags, language, paragraph_url, published_at, obsidian_source_file, generated_by\n) VALUES (\n  '{{$json.id}}',\n  '{{$('Step 5: Extract Metadata').item.json.metadata.title}}',\n  '{{$json.slug}}',\n  '{{$('Step 5: Extract Metadata').item.json.paragraphPayload.body}}',\n  {{$('Step 5: Extract Metadata').item.json.metadata.wordCount}},\n  {{$('Step 5: Extract Metadata').item.json.metadata.readTime}},\n  '{{$('Step 5: Extract Metadata').item.json.metadata.hashtags}}',\n  'mixed_ja_en',\n  '{{$json.url}}',\n  NOW(),\n  '{{$('Step 5: Extract Metadata').item.json.originalFile}}',\n  'n8n_flow1'\n);"
+      },
+      "name": "Step 7: Log to PostgreSQL",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [1540, -100],
+      "credentials": {
+        "postgres": {
+          "id": "neon_postgres_id",
+          "name": "Neon Database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:27123/graph",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{$env.OBSIDIAN_REST_API_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "method",
+              "value": "resources/write"
+            },
+            {
+              "name": "params",
+              "value": "={\"uri\": \"obsidian:///vault/Content/Paragraph/published/{{$('Step 1: Get Obsidian Drafts').item.json.files[0].path.split('/').pop()}}\", \"metadata\": {\"published_url\": \"{{$json.url}}\"}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Step 10: Move Obsidian File",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1760, -100]
+    }
+  ],
+  "connections": {
+    "Cron Daily 8AM": {
+      "main": [
+        [
+          {
+            "node": "Step 1: Get Obsidian Drafts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "手動テスト実行": {
+      "main": [
+        [
+          {
+            "node": "Step 1: Get Obsidian Drafts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Step 1: Get Obsidian Drafts": {
+      "main": [
+        [
+          {
+            "node": "Step 2: Check If Drafts Exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Step 2: Check If Drafts Exist": {
+      "main": [
+        [
+          {
+            "node": "Step 3: Generate Claude Article",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Step 3: Generate Claude Article": {
+      "main": [
+        [
+          {
+            "node": "Step 4: Parse Claude JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Step 4: Parse Claude JSON": {
+      "main": [
+        [
+          {
+            "node": "Step 5: Extract Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Step 5: Extract Metadata": {
+      "main": [
+        [
+          {
+            "node": "Step 6: Post to Paragraph API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Step 6: Post to Paragraph API": {
+      "main": [
+        [
+          {
+            "node": "Step 7: Log to PostgreSQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Step 7: Log to PostgreSQL": {
+      "main": [
+        [
+          {
+            "node": "Step 10: Move Obsidian File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
