@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:backend": "python -m uvicorn backend.server:app --host 127.0.0.1 --port 8000 --reload",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "db:generate": "npx prisma generate",
