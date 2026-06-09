@@ -1,0 +1,38 @@
+[1;37m[[m
+  [1;37m{[m
+    [1;34m"sha"[m[1;37m:[m [32m"49f4504b6e9f424db05dec719afe4c0b39a8c6c6"[m[1;37m,[m
+    [1;34m"node_id"[m[1;37m:[m [32m"C_kwDOS0MLv9oAKDQ5ZjQ1MDRiNmU5ZjQyNGRiMDVkZWM3MTlhZmU0YzBiMzlhOGM2YzY"[m[1;37m,[m
+    [1;34m"commit"[m[1;37m:[m [1;37m{[m
+      [1;34m"author"[m[1;37m:[m [1;37m{[m
+        [1;34m"name"[m[1;37m:[m [32m"hideki-tamae"[m[1;37m,[m
+        [1;34m"email"[m[1;37m:[m [32m"1.5570867e+07+hideki-tamae@users.noreply.github.com"[m[1;37m,[m
+        [1;34m"date"[m[1;37m:[m [32m"2026-06-09T07:10:41Z"[m
+      [1;37m}[m[1;37m,[m
+      [1;34m"committer"[m[1;37m:[m [1;37m{[m
+        [1;34m"name"[m[1;37m:[m [32m"hideki-tamae"[m[1;37m,[m
+        [1;34m"email"[m[1;37m:[m [32m"1.5570867e+07+hideki-tamae@users.noreply.github.com"[m[1;37m,[m
+        [1;34m"date"[m[1;37m:[m [32m"2026-06-09T07:10:41Z"[m
+      [1;37m}[m[1;37m,[m
+      [1;34m"message"[m[1;37m:[m [32m"feat: Upgrade to HAIS v1.1 (Essential files)"[m[1;37m,[m
+      [1;34m"tree"[m[1;37m:[m [1;37m{[m
+        [1;34m"sha"[m[1;37m:[m [32m"4c9da5ce1a0acefc5a68eaf360f6fd153668cda2"[m[1;37m,[m
+        [1;34m"url"[m[1;37m:[m [32m"https://api.github.com/repos/hideki-tamae/hais-soluna-alpha/git/trees/4c9da5ce1a0acefc5a68eaf360f6fd153668cda2"[m
+      [1;37m}[m[1;37m,[m
+      [1;34m"url"[m[1;37m:[m [32m"https://api.github.com/repos/hideki-tamae/hais-soluna-alpha/git/commits/49f4504b6e9f424db05dec719afe4c0b39a8c6c6"[m[1;37m,[m
+      [1;34m"comment_count"[m[1;37m:[m 0[1;37m,[m
+      [1;34m"verification"[m[1;37m:[m [1;37m{[m
+        [1;34m"verified"[m[1;37m:[m [33mfalse[m[1;37m,[m
+        [1;34m"reason"[m[1;37m:[m [32m"unsigned"[m[1;37m,[m
+        [1;34m"signature"[m[1;37m:[m [36mnull[m[1;37m,[m
+        [1;34m"payload"[m[1;37m:[m [36mnull[m[1;37m,[m
+        [1;34m"verified_at"[m[1;37m:[m [36mnull[m
+      [1;37m}[m
+    [1;37m}[m[1;37m,[m
+    [1;34m"url"[m[1;37m:[m [32m"https://api.github.com/repos/hideki-tamae/hais-soluna-alpha/commits/49f4504b6e9f424db05dec719afe4c0b39a8c6c6"[m[1;37m,[m
+    [1;34m"html_url"[m[1;37m:[m [32m"https://github.com/hideki-tamae/hais-soluna-alpha/commit/49f4504b6e9f424db05dec719afe4c0b39a8c6c6"[m[1;37m,[m
+    [1;34m"comments_url"[m[1;37m:[m [32m"https://api.github.com/repos/hideki-tamae/hais-soluna-alpha/commits/49f4504b6e9f424db05dec719afe4c0b39a8c6c6/comments"[m[1;37m,[m
+    [1;34m"author"[m[1;37m:[m [36mnull[m[1;37m,[m
+    [1;34m"committer"[m[1;37m:[m [36mnull[m[1;37m,[m
+    [1;34m"parents"[m[1;37m:[m [1;37m[[m[1;37m][m
+  [1;37m}[m
+[1;37m][m

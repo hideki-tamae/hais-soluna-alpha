@@ -1,5 +1,3 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,24 +8,78 @@ datasource db {
 }
 
 model User {
-  id              String           @id @default(cuid())
-  walletAddress   String           @unique
-  baseAcesScore   Float            @default(4.0)
-  scans           ScanHistory[]
-  peakCalib       PeakCalibration?
-  careActions     CareAction[]
-  claims          Claim[]
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id                  String         @id @default(cuid())
+  email               String?        @unique
+  passwordHash        String?
+  emailVerified       DateTime?
+
+  walletAddress       String?        @unique // 既に存在。重要。
+  role                Role           @default(EMPLOYEE) // 追加: B2Bの権限管理
+  department          String?        // 追加: エンタープライズの部署管理用
+  baseAcesScore       Float          @default(4.0)
+  baseAcesScore_v1_1  Int?           // HAIS v1.1 追加
+
+  // ケアアクションの双方向リレーション
+  careActionsReceived CareAction[]   @relation("CareReceiver")
+  careActionsGiven    CareAction[]   @relation("CareGiver")
+
+  scans               ScanHistory[]
+  peakCalib           PeakCalibration?
+  claims              Claim[]
+
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  // NextAuth.js のアカウントとセッション連携用
+  accounts            Account[]
+  sessions            Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
 }
 
 model Claim {
   id            String   @id @default(cuid())
-  userId        String?  // ✅ `?` を追加して任意に
-  user          User?    @relation(fields: [userId], references: [id]) // ✅ `?` を追加して任意に
+  userId        String? 
+  user          User?    @relation(fields: [userId], references: [id])
   walletAddress String?
   passphrase    String?
-  amount        Float?   // ✅ `?` を追加して任意に
+  amount        Float?
   status        String   @default("PENDING")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -42,17 +94,27 @@ model AdminLog {
 }
 
 model ScanHistory {
-  id           String   @id @default(cuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id])
-  omegaScore   Float
-  neuralState  String
-  logicVersion String   @default("Satsuma-v1.1")
-  f0Hz         Float?
-  jitterPct    Float?
-  shimmerPct   Float?
-  hnrDb        Float?
-  createdAt    DateTime @default(now())
+  id              String      @id @default(cuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  omegaScore      Int         
+  neuralState     NeuralState               
+  analysisReason  String      @db.Text      
+  audioSizeBytes  Int                       
+  isFallback      Boolean     @default(false) 
+  apiVersion      String      @default("v1.1") 
+  model           String      @default("gemini-1.5-pro-latest") 
+  createdAt       DateTime    @default(now())
+
+  // v1.0 互換性維持のためのフィールド（オプショナル化）
+  logicVersion    String?     @default("Satsuma-v1.1")
+  f0Hz            Float?
+  jitterPct       Float?
+  shimmerPct      Float?
+  hnrDb           Float?
+
+  @@index([userId, createdAt])   
+  @@index([neuralState])          
 }
 
 model PeakCalibration {
@@ -69,13 +131,59 @@ model PeakCalibration {
   updatedAt    DateTime @updatedAt
 }
 
+// B2Bの権限ロール
+enum Role {
+  EMPLOYEE
+  MANAGER
+  ADMIN
+}
+
+enum NeuralState {
+  VENTRAL      
+  SYMPATHETIC  
+  DORSAL       
+}
+
+// ケアの証明（Proof of Care）の核となるモデル
 model CareAction {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  action      String
-  actionType  String?
-  amount      Float
-  impactScore Float    @default(0)
-  createdAt   DateTime @default(now())
+  id              String     @id @default(cuid())
+  
+  // 誰が（Giver）、誰を（Receiver）ケアしたのかの明確化
+  receiverId      String
+  receiver        User       @relation("CareReceiver", fields: [receiverId], references: [id])
+  giverId         String?    // システム自動付与の場合はnull
+  giver           User?      @relation("CareGiver", fields: [giverId], references: [id])
+  
+  // ケアの内容と価値
+  actionType      ActionType
+  description     String?
+  impactScore     Float      @default(0) // 離職リスク低減などの効果測定
+  solunaAmount    Float      // 付与されるSOLUNAトークンの量
+  
+  // 承認とオンチェーン連携の状態管理
+  status          CareStatus @default(PENDING)
+  txHash          String?    @unique // オンチェーンのトランザクションハッシュ
+  mintedAt        DateTime?  // 実際にトークンが発行された日時
+  
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+// ケアアクションの種類を定義し、恣意的な入力を防ぐ
+enum ActionType {
+  VOICE_SCAN       // 音声スキャン実施（自動）
+  ONE_ON_ONE       // 1on1面談実施（Manager承認）
+  PEER_SUPPORT     // ピアサポート（従業員間）
+  // ... その他必要なアクション
+}
+
+// 状態遷移の厳格化
+enum CareStatus {
+  PENDING          // 実施済み・承認待ち
+  APPROVING        // DBロック中・署名待機中
+  APPROVED         // 承認済み・Mint待機
+  MINTED           // SOLUNA発行完了（オンチェーン完了）
+  COMPLETED        // オンチェーン確定済み（Proof of Care Met）
+  FAILED           // 発行エラー
+  REJECTED         // 承認否認
 }

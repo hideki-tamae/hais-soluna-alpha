@@ -1,0 +1,100 @@
+[1;37m[[m
+  [1;37m{[m
+    [1;34m"sha"[m[1;37m:[m [32m"a2df9e3920584919c8028a1bc5b718bfc4985948"[m[1;37m,[m
+    [1;34m"node_id"[m[1;37m:[m [32m"C_kwDOQuk2wtoAKGEyZGY5ZTM5MjA1ODQ5MTljODAyOGExYmM1YjcxOGJmYzQ5ODU5NDg"[m[1;37m,[m
+    [1;34m"commit"[m[1;37m:[m [1;37m{[m
+      [1;34m"author"[m[1;37m:[m [1;37m{[m
+        [1;34m"name"[m[1;37m:[m [32m"Hideki Tamae"[m[1;37m,[m
+        [1;34m"email"[m[1;37m:[m [32m"tamatixyan@gmail.com"[m[1;37m,[m
+        [1;34m"date"[m[1;37m:[m [32m"2026-06-04T01:18:28Z"[m
+      [1;37m}[m[1;37m,[m
+      [1;34m"committer"[m[1;37m:[m [1;37m{[m
+        [1;34m"name"[m[1;37m:[m [32m"Hideki Tamae"[m[1;37m,[m
+        [1;34m"email"[m[1;37m:[m [32m"tamatixyan@gmail.com"[m[1;37m,[m
+        [1;34m"date"[m[1;37m:[m [32m"2026-06-04T01:18:28Z"[m
+      [1;37m}[m[1;37m,[m
+      [1;34m"message"[m[1;37m:[m [32m"fix: completely bypass LFS to deploy true binary image"[m[1;37m,[m
+      [1;34m"tree"[m[1;37m:[m [1;37m{[m
+        [1;34m"sha"[m[1;37m:[m [32m"551ceab349b87107246592f86e84043981f02d8f"[m[1;37m,[m
+        [1;34m"url"[m[1;37m:[m [32m"https://api.github.com/repos/hideki-tamae/soluna-lp/git/trees/551ceab349b87107246592f86e84043981f02d8f"[m
+      [1;37m}[m[1;37m,[m
+      [1;34m"url"[m[1;37m:[m [32m"https://api.github.com/repos/hideki-tamae/soluna-lp/git/commits/a2df9e3920584919c8028a1bc5b718bfc4985948"[m[1;37m,[m
+      [1;34m"comment_count"[m[1;37m:[m 0[1;37m,[m
+      [1;34m"verification"[m[1;37m:[m [1;37m{[m
+        [1;34m"verified"[m[1;37m:[m [33mfalse[m[1;37m,[m
+        [1;34m"reason"[m[1;37m:[m [32m"unsigned"[m[1;37m,[m
+        [1;34m"signature"[m[1;37m:[m [36mnull[m[1;37m,[m
+        [1;34m"payload"[m[1;37m:[m [36mnull[m[1;37m,[m
+        [1;34m"verified_at"[m[1;37m:[m [36mnull[m
+      [1;37m}[m
+    [1;37m}[m[1;37m,[m
+    [1;34m"url"[m[1;37m:[m [32m"https://api.github.com/repos/hideki-tamae/soluna-lp/commits/a2df9e3920584919c8028a1bc5b718bfc4985948"[m[1;37m,[m
+    [1;34m"html_url"[m[1;37m:[m [32m"https://github.com/hideki-tamae/soluna-lp/commit/a2df9e3920584919c8028a1bc5b718bfc4985948"[m[1;37m,[m
+    [1;34m"comments_url"[m[1;37m:[m [32m"https://api.github.com/repos/hideki-tamae/soluna-lp/commits/a2df9e3920584919c8028a1bc5b718bfc4985948/comments"[m[1;37m,[m
+    [1;34m"author"[m[1;37m:[m [1;37m{[m
+      [1;34m"login"[m[1;37m:[m [32m"hideki-tamae"[m[1;37m,[m
+      [1;34m"id"[m[1;37m:[m 15570867[1;37m,[m
+      [1;34m"node_id"[m[1;37m:[m [32m"MDQ6VXNlcjE1NTcwODY3"[m[1;37m,[m
+      [1;34m"avatar_url"[m[1;37m:[m [32m"https://avatars.githubusercontent.com/u/15570867?v=4"[m[1;37m,[m
+      [1;34m"gravatar_id"[m[1;37m:[m [32m""[m[1;37m,[m
+      [1;34m"url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae"[m[1;37m,[m
+      [1;34m"html_url"[m[1;37m:[m [32m"https://github.com/hideki-tamae"[m[1;37m,[m
+      [1;34m"followers_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/followers"[m[1;37m,[m
+      [1;34m"following_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/following{/other_user}"[m[1;37m,[m
+      [1;34m"gists_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/gists{/gist_id}"[m[1;37m,[m
+      [1;34m"starred_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/starred{/owner}{/repo}"[m[1;37m,[m
+      [1;34m"subscriptions_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/subscriptions"[m[1;37m,[m
+      [1;34m"organizations_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/orgs"[m[1;37m,[m
+      [1;34m"repos_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/repos"[m[1;37m,[m
+      [1;34m"events_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/events{/privacy}"[m[1;37m,[m
+      [1;34m"received_events_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/received_events"[m[1;37m,[m
+      [1;34m"type"[m[1;37m:[m [32m"User"[m[1;37m,[m
+      [1;34m"user_view_type"[m[1;37m:[m [32m"public"[m[1;37m,[m
+      [1;34m"site_admin"[m[1;37m:[m [33mfalse[m
+    [1;37m}[m[1;37m,[m
+    [1;34m"committer"[m[1;37m:[m [1;37m{[m
+      [1;34m"login"[m[1;37m:[m [32m"hideki-tamae"[m[1;37m,[m
+      [1;34m"id"[m[1;37m:[m 15570867[1;37m,[m
+      [1;34m"node_id"[m[1;37m:[m [32m"MDQ6VXNlcjE1NTcwODY3"[m[1;37m,[m
+      [1;34m"avatar_url"[m[1;37m:[m [32m"https://avatars.githubusercontent.com/u/15570867?v=4"[m[1;37m,[m
+      [1;34m"gravatar_id"[m[1;37m:[m [32m""[m[1;37m,[m
+      [1;34m"url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae"[m[1;37m,[m
+      [1;34m"html_url"[m[1;37m:[m [32m"https://github.com/hideki-tamae"[m[1;37m,[m
+      [1;34m"followers_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/followers"[m[1;37m,[m
+      [1;34m"following_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/following{/other_user}"[m[1;37m,[m
+      [1;34m"gists_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/gists{/gist_id}"[m[1;37m,[m
+      [1;34m"starred_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/starred{/owner}{/repo}"[m[1;37m,[m
+      [1;34m"subscriptions_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/subscriptions"[m[1;37m,[m
+      [1;34m"organizations_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/orgs"[m[1;37m,[m
+      [1;34m"repos_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/repos"[m[1;37m,[m
+      [1;34m"events_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/events{/privacy}"[m[1;37m,[m
+      [1;34m"received_events_url"[m[1;37m:[m [32m"https://api.github.com/users/hideki-tamae/received_events"[m[1;37m,[m
+      [1;34m"type"[m[1;37m:[m [32m"User"[m[1;37m,[m
+      [1;34m"user_view_type"[m[1;37m:[m [32m"public"[m[1;37m,[m
+      [1;34m"site_admin"[m[1;37m:[m [33mfalse[m
+    [1;37m}[m[1;37m,[m
+    [1;34m"parents"[m[1;37m:[m [1;37m[[m
+      [1;37m{[m
+        [1;34m"sha"[m[1;37m:[m [32m"aca8ad8f1286833a5beeeb7627de5a1c19808649"[m[1;37m,[m
+        [1;34m"url"[m[1;37m:[m [32m"https://api.github.com/repos/hideki-tamae/soluna-lp/commits/aca8ad8f1286833a5beeeb7627de5a1c19808649"[m[1;37m,[m
+        [1;34m"html_url"[m[1;37m:[m [32m"https://github.com/hideki-tamae/soluna-lp/commit/aca8ad8f1286833a5beeeb7627de5a1c19808649"[m
+      [1;37m}[m
+    [1;37m][m
+  [1;37m}[m[1;37m,[m
+  [1;37m{[m
+    [1;34m"sha"[m[1;37m:[m [32m"aca8ad8f1286833a5beeeb7627de5a1c19808649"[m[1;37m,[m
+    [1;34m"node_id"[m[1;37m:[m [32m"C_kwDOQuk2wtoAKGFjYThhZDhmMTI4NjgzM2E1YmVlZWI3NjI3ZGU1YTFjMTk4MDg2NDk"[m[1;37m,[m
+    [1;34m"commit"[m[1;37m:[m [1;37m{[m
+      [1;34m"author"[m[1;37m:[m [1;37m{[m
+        [1;34m"name"[m[1;37m:[m [32m"Hideki Tamae"[m[1;37m,[m
+        [1;34m"email"[m[1;37m:[m [32m"tamatixyan@gmail.com"[m[1;37m,[m
+        [1;34m"date"[m[1;37m:[m [32m"2026-06-04T00:53:15Z"[m
+      [1;37m}[m[1;37m,[m
+      [1;34m"committer"[m[1;37m:[m [1;37m{[m
+        [1;34m"name"[m[1;37m:[m [32m"Hideki Tamae"[m[1;37m,[m
+        [1;34m"email"[m[1;37m:[m [32m"tamatixyan@gmail.com"[m[1;37m,[m
+        [1;34m"date"[m[1;37m:[m [32m"2026-06-04T00:53:15Z"[m
+      [1;37m}[m[1;37m,[m
+      [1;34m"message"[m[1;37m:[m [32m"chore: force add missing asset"[m[1;37m,[m
+      [1;34m"tree"[m[1;37m:[m [1;37m{[m
+        [1;34m"sha"[m[1;37m:[m [32m"a483db9c4a62ea81a4a1289e662ec3cb83a46caa"[m[1;37m,[m
