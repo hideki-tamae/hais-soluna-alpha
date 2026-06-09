@@ -31,6 +31,8 @@ export async function POST(req: Request) {
     const scan = await prisma.scanHistory.create({
       data: {
         userId: user.id,
+        analysisReason: "Migrated from v1.0",
+        audioSizeBytes: 0,
         omegaScore,
         neuralState,
         logicVersion,

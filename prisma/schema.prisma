@@ -20,7 +20,7 @@ model User {
   baseAcesScore_v1_1  Int?           // HAIS v1.1 追加
 
   // ケアアクションの双方向リレーション
-  careActionsReceived CareAction[]   @relation("CareReceiver")
+  careActions CareAction[]   @relation("CareReceiver")
   careActionsGiven    CareAction[]   @relation("CareGiver")
 
   scans               ScanHistory[]

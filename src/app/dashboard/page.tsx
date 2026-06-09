@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Dashboard from '@/components/civilization/Dashboard';
 
 export default function DashboardPage() {
